@@ -186,6 +186,7 @@ def execute_command(command_dict):
 			"set_object_layer": commands.set_object_layer,
 			# Selection
 			"select_all": commands.select_all,
+			"select_objects": commands.select_objects,
 			"select_by_type": commands.select_by_type,
 			"select_by_layer": commands.select_by_layer,
 			"unselect_all": commands.unselect_all,
@@ -198,7 +199,13 @@ def execute_command(command_dict):
 
 		handler = command_map.get(cmd_type)
 		if handler:
-			return handler(params)
+			doc = Rhino.RhinoDoc.ActiveDoc
+			undo_serial = doc.BeginUndoRecord("RhinoMCP: " + cmd_type)
+			try:
+				result = handler(params)
+			finally:
+				doc.EndUndoRecord(undo_serial)
+			return result
 		else:
 			return {"status": "error", "message": "Unknown command: " + cmd_type}
 

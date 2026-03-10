@@ -710,6 +710,15 @@ def unselect_all(params):
 	return {"status": "success", "result": {"message": "All objects unselected"}}
 
 
+def select_objects(params):
+	"""Select objects by IDs"""
+	ids = params.get("ids", [])
+	if not ids:
+		return {"status": "error", "message": "No IDs provided"}
+	selection.select_objects(ids)
+	return {"status": "success", "result": {"count": len(ids)}}
+
+
 def select_by_type(params):
 	"""Select objects by type"""
 	obj_type = params.get("type", "curve")
